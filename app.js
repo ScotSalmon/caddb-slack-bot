@@ -37,12 +37,32 @@ slack.on('message', function(message)
 
         // names from slack message. we will fuzzy match them later
         fuzzynames = [];
+        desiredtraits = [];
         if(matches)
         {
             // pull off the []
             for(var i = 0; i < matches.length; ++i)
             {
-                fuzzynames.push(matches[i].substring(1, matches[i].length - 1));
+                // check for trait search
+                if(matches[i].substring(1,3)=="k:")
+                {
+                    desiredtraits.push(matches[i].substring(3, matches[i].length - 1));
+                }
+                else
+                {
+                    fuzzynames.push(matches[i].substring(1, matches[i].length - 1));
+                }
+            }
+        }
+
+        for(var i = 0; i < desiredtraits.length; ++i)
+        {
+            for(var j = 0; j < cardnames.length; ++j)
+            {
+                if(desiredtraits[i] in cardmap[cardnames[j]].traits)
+                {
+                    channel.send(cardnames[j]);
+                }
             }
         }
 
